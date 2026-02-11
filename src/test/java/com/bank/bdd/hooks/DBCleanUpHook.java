@@ -10,14 +10,14 @@ public class DBCleanUpHook {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Before
+    @Before("@setup")
     public void cleanDb() {
-        System.out.println("*********Cleaning up BEFORE scenario********");
+        System.out.println("*********Cleaning up BEFORE feature********");
         jdbcTemplate.execute("DROP TABLE IF EXISTS CUSTOMER");
-        // jdbcTemplate.execute("DROP TABLE IF EXISTS CUSTOMER_ENRICHED");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS CUSTOMER_ENRICHED");
 
         jdbcTemplate.execute("CREATE TABLE CUSTOMER (CUSTOMER_ID VARCHAR(20) PRIMARY KEY, NAME VARCHAR(100))");
-        // jdbcTemplate.execute("CREATE TABLE CUSTOMER_ENRICHED (CUSTOMER_ID VARCHAR(20) PRIMARY KEY, ENRICHED_NAME VARCHAR(100))");
+        jdbcTemplate.execute("CREATE TABLE CUSTOMER_ENRICHED (CUSTOMER_ID VARCHAR(20) PRIMARY KEY, ENRICHED_NAME VARCHAR(100))");
 
         System.out.println("*********Rows in Customer after cleanup********"+
                 jdbcTemplate.queryForObject("SELECT COUNT(*) FROM CUSTOMER",

@@ -1,3 +1,4 @@
+@setup
 Feature: Kafka customer ingestion
 
   Scenario Outline: Customer data is consumed and persisted
@@ -13,5 +14,5 @@ Feature: Kafka customer ingestion
       Given valid customer events are processed
       When enrichment job is triggered
       Then enriched customer table should have 1 record
-      And enriched customer name should be "John"
+      And enriched customer name should be "JOHN"
 

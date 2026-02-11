@@ -21,8 +21,8 @@ public class CustomerEnrichmentJob {
                 jdbcTemplate.query(
                         "SELECT CUSTOMER_ID, NAME FROM CUSTOMER",
                         (rs, rowNum) ->
-                                new Customer(rs.getString("id"),
-                                        rs.getString("name"))
+                                new Customer(rs.getString("CUSTOMER_ID"),
+                                        rs.getString("NAME"))
                 );
 
         for (Customer c : customers) {

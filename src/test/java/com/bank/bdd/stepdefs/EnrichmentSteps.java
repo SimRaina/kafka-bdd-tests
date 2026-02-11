@@ -58,7 +58,7 @@ public class EnrichmentSteps {
     @And("enriched customer name should be {string}")
     public void enriched_customer_name_should_be(String expectedName) {
         String name = jdbcTemplate.queryForObject(
-                "SELECT enriched_name FROM CUSTOMER_ENRICHED WHERE CUSTOMER_ID = 'CUST1'",
+                "SELECT ENRICHED_NAME FROM CUSTOMER_ENRICHED WHERE CUSTOMER_ID = '1'",
                 String.class
         );
 
