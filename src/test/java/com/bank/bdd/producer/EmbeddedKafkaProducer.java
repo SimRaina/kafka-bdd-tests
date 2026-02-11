@@ -1,5 +1,6 @@
 package com.bank.bdd.producer;
 
+import com.bank.bdd.support.EmbeddedKafkaBrokerHolder;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -11,7 +12,6 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-// import support.EmbeddedKafkaBrokerHolder;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Properties;
@@ -20,14 +20,15 @@ public class EmbeddedKafkaProducer {
 
     public static void send(String topic, String key, GenericRecord record, Schema schema) {
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                EmbeddedKafkaBrokerHolder.getBrokersAsString());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 ByteArraySerializer.class);
 
         try (KafkaProducer<String, byte[]> producer =
-                new KafkaProducer<>(props)) {
+                     new KafkaProducer<>(props)) {
 
             byte[] avroBytes = serialize(record, schema);
 
@@ -49,8 +50,8 @@ public class EmbeddedKafkaProducer {
             writer.write(record, encoder);
             encoder.flush();
             return out.toByteArray();
-        }catch(Exception e) {
-           throw new RuntimeException();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -1,13 +1,12 @@
 package com.bank.bdd.stepdefs;
 
 import com.bank.bdd.consumer.TestKafkaConsumer;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import org.apache.avro.Schema;
 import com.bank.bdd.producer.AvroMessageBuilder;
 import com.bank.bdd.producer.EmbeddedKafkaProducer;
+import com.bank.bdd.support.EmbeddedKafkaBrokerHolder;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
-// import support.EmbeddedKafkaBrokerHolder;
 
 import java.util.Map;
 import java.util.UUID;
@@ -23,7 +22,6 @@ public class KafkaSteps {
         String customerId = "CUST_" + UUID.randomUUID().toString().substring(0, 8);
         scenarioContext.setCurrentCustomerId(customerId);
 
-        Schema schema;
         var record = AvroMessageBuilder.buildCustomer(
                 Map.of(
                         "customerId", customerId,
@@ -42,14 +40,15 @@ public class KafkaSteps {
     @And("the customer message is processed")
     public void consumeMessage() {
         // Use unique group ID to avoid offset conflicts between test runs
-        String uniqueGroupId = "test-group-" + UUID.randomUUID().toString();
+        String uniqueGroupId = "test-group-" + UUID.randomUUID();
 
         TestKafkaConsumer consumer =
                 new TestKafkaConsumer(
-                        "localhost:9092",
+                        EmbeddedKafkaBrokerHolder.getBrokersAsString(),
                         AvroMessageBuilder.getCustomerSchema(),
                         uniqueGroupId
                 );
+        System.out.println("Embedded Kafka broker: " + EmbeddedKafkaBrokerHolder.getBrokersAsString());
         System.out.println("Kafka is running with consumer group: " + uniqueGroupId);
         consumer.pollAndPersist();
         consumer.close();
