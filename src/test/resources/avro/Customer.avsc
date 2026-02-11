@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "Customer",
+  "namespace": "com.bank",
+  "fields": [
+    { "name":  "customerId", "type": "string" },
+    { "name":  "name", "type":  "string" }
+  ]
+}
