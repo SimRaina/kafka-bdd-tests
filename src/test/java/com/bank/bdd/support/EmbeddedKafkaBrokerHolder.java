@@ -1,27 +1,27 @@
 package com.bank.bdd.support;
 
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Holder for the embedded Kafka broker instance created by Spring's @EmbeddedKafka
+ * The actual broker is initialized through the CucumberSpringConfig
+ */
 public final class EmbeddedKafkaBrokerHolder {
 
-    private static final EmbeddedKafkaBroker EMBEDDED_KAFKA =
-            new EmbeddedKafkaBroker(1)
-                    .kafkaPorts(0)
-                    .brokerProperty("auto.create.topics.enable", "true")
-                    .brokerProperty("listeners", "PLAINTEXT://127.0.0.1:0");
-
-    static {
-        EMBEDDED_KAFKA.afterPropertiesSet();
-    }
+    private static final AtomicReference<String> brokerString = new AtomicReference<>("localhost:9092");
 
     private EmbeddedKafkaBrokerHolder() {
     }
 
+    public static void setBrokersAsString(String brokers) {
+        brokerString.set(brokers);
+    }
+
     public static String getBrokersAsString() {
-        return EMBEDDED_KAFKA.getBrokersAsString();
+        return brokerString.get();
     }
 
     public static void destroy() {
-        EMBEDDED_KAFKA.destroy();
+        // Destruction is handled by Spring's lifecycle management
     }
 }
