@@ -31,10 +31,11 @@ This project showcases a **customer data ingestion and enrichment pipeline** usi
 - **Cucumber & BDD** for behavior-driven test scenarios
 - **Spring Boot** as the application framework
 
-The project demonstrates two primary workflows:
+The project demonstrates three primary workflows:
 
 1. **Data Ingestion**: Customer data is produced in AVRO format, sent through Kafka topics, consumed, and saved to the database
 2. **Data Enrichment**: Persisted customer data is enriched (name transformation) via a batch job and saved to a separate enriched table
+3. **API Validation Flow**: Customer payload is posted to an API endpoint, response data is persisted to H2, and stored values are validated
 
 ---
 
