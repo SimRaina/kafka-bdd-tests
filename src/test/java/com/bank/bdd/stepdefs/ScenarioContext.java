@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 public class ScenarioContext {
 
     private String currentCustomerId;
+    private String apiResponseBody;
+    private Integer apiResponseStatusCode;
 
     public String getCurrentCustomerId() {
         return currentCustomerId;
@@ -16,5 +18,21 @@ public class ScenarioContext {
 
     public void setCurrentCustomerId(String customerId) {
         this.currentCustomerId = customerId;
+    }
+
+    public String getApiResponseBody() {
+        return apiResponseBody;
+    }
+
+    public void setApiResponseBody(String apiResponseBody) {
+        this.apiResponseBody = apiResponseBody;
+    }
+
+    public Integer getApiResponseStatusCode() {
+        return apiResponseStatusCode;
+    }
+
+    public void setApiResponseStatusCode(Integer apiResponseStatusCode) {
+        this.apiResponseStatusCode = apiResponseStatusCode;
     }
 }
