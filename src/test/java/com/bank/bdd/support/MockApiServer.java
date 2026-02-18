@@ -26,6 +26,7 @@ public class MockApiServer {
         server.createContext("/customer/status", this::handleStatus);
         server.setExecutor(Executors.newSingleThreadExecutor());
         server.start();
+        System.out.println("[API-TEST] MockApiServer listening on: " + getEndpointUrl());
     }
 
     public synchronized void stop() {
@@ -48,8 +49,10 @@ public class MockApiServer {
         }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        System.out.println("[API-TEST] MockApiServer received request: " + requestBody);
         String customerId = extractField(requestBody, "customerId");
         String responseBody = "{\"customerId\":\"" + customerId + "\",\"status\":\"ACTIVE\",\"source\":\"MOCK-API\"}";
+        System.out.println("[API-TEST] MockApiServer response: " + responseBody);
 
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         byte[] responseBytes = responseBody.getBytes(StandardCharsets.UTF_8);

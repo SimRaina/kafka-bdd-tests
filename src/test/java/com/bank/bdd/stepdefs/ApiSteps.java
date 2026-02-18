@@ -30,6 +30,7 @@ public class ApiSteps {
     @Given("an API endpoint is available for customer status")
     public void anApiEndpointIsAvailableForCustomerStatus() throws Exception {
         mockApiServer.start();
+        System.out.println("[API-TEST] Mock API server started at: " + mockApiServer.getEndpointUrl());
     }
 
     @When("customer status payload is posted for customer {string}")
@@ -45,6 +46,10 @@ public class ApiSteps {
         HttpResponse<String> response = HttpClient.newHttpClient()
                 .send(request, HttpResponse.BodyHandlers.ofString());
 
+        System.out.println("[API-TEST] Request payload: " + requestBody);
+        System.out.println("[API-TEST] Response status: " + response.statusCode());
+        System.out.println("[API-TEST] Response body: " + response.body());
+
         scenarioContext.setApiResponseBody(response.body());
         scenarioContext.setApiResponseStatusCode(response.statusCode());
         scenarioContext.setCurrentCustomerId(customerId);
@@ -57,7 +62,7 @@ public class ApiSteps {
 
         Map<String, Object> fields = parseApiResponse(responseBody);
 
-        jdbcTemplate.update(
+        int rowsUpdated = jdbcTemplate.update(
                 """
                 MERGE INTO CUSTOMER_API_RESPONSE (CUSTOMER_ID, STATUS, SOURCE, RAW_RESPONSE)
                 KEY (CUSTOMER_ID)
@@ -68,6 +73,14 @@ public class ApiSteps {
                 fields.get("source"),
                 responseBody
         );
+
+        System.out.println("[API-TEST] Rows updated in CUSTOMER_API_RESPONSE: " + rowsUpdated);
+
+        Map<String, Object> savedRow = jdbcTemplate.queryForMap(
+                "SELECT CUSTOMER_ID, STATUS, SOURCE, RAW_RESPONSE FROM CUSTOMER_API_RESPONSE WHERE CUSTOMER_ID = ?",
+                customerId
+        );
+        System.out.println("[API-TEST] Saved H2 row: " + savedRow);
     }
 
     @Then("API response should be persisted with status {string} and source {string}")
@@ -76,6 +89,8 @@ public class ApiSteps {
                 "SELECT STATUS, SOURCE FROM CUSTOMER_API_RESPONSE WHERE CUSTOMER_ID = ?",
                 scenarioContext.getCurrentCustomerId()
         );
+
+        System.out.println("[API-TEST] Validation row from H2: " + dbRow);
 
         assertEquals(200, scenarioContext.getApiResponseStatusCode(), "Unexpected API response status code");
         assertEquals(expectedStatus, dbRow.get("STATUS"));
